@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const Users = require('./auth-model.js');
+const jwt = require('jsonwebtoken')
+const secrets = require('../config/secrets.js')
 
 router.post('/register', (req, res) => {
   let user = req.body;
@@ -11,7 +13,10 @@ router.post('/register', (req, res) => {
 
   Users.add(user)
     .then(saved => {
-      res.status(201).json(saved);
+      res.status(201).json({
+        message: "Created user. Generated token",
+        saved
+      });
     })
     .catch(error => {
       console.log(error);
@@ -40,6 +45,7 @@ router.post('/login', (req, res) => {
       }
     })
     .catch(error => {
+      console.log(error);
       res.status(500).json({
         message: "Server Error!",
         error
